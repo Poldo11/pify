@@ -1,4 +1,4 @@
-import fragments/cart.{cart_fragment}
+import fragments.{cart_fragment}
 import gleam/dynamic/decode
 import types.{type ShopifyCart, shopify_cart_decoder}
 

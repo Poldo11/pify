@@ -1,3 +1,110 @@
+pub fn cart_fragment() {
+  "
+  	fragment cart on Cart {
+  		id
+  		checkoutUrl
+  		cost {
+  			subtotalAmount {
+  				amount
+  				currencyCode
+  			}
+  			totalAmount {
+  				amount
+  				currencyCode
+  			}
+  			totalTaxAmount {
+  				amount
+  				currencyCode
+  			}
+  		}
+  		lines(first: 100) {
+  			edges {
+  				node {
+  					id
+  					quantity
+  					attributes {
+  						key
+  						value
+  					}
+  					cost {
+  						totalAmount {
+  							amount
+  							currencyCode
+  						}
+  					}
+  					merchandise {
+  						... on ProductVariant {
+  							id
+  							title
+  							compareAtPrice {
+  								amount
+  								currencyCode
+  							}
+  							selectedOptions {
+  								name
+  								value
+  							}
+  							product {
+  								...product
+  							}
+  						}
+  					}
+  				}
+  			}
+  		}
+  		totalQuantity
+  	}
+  " <> product_fragment()
+}
+
+pub fn image_fragment() {
+  // GraphQL
+  "
+	fragment image on Image {
+		url
+		altText
+		width
+		height
+	}
+  "
+}
+
+pub fn metafield_fragment() {
+  // GraphQL
+  "
+  fragment metafield on Metafield {
+  key
+  value
+  type
+  }
+  "
+}
+
+pub fn metaobject_fragment() {
+  // GraphQL
+  "
+  	fragment metaobject on Metaobject {
+  		id
+  		type
+  		fields {
+  			key
+  			value
+  			type
+  			reference {
+  				... on Metaobject {
+  					id
+  					type
+  					fields {
+  						key
+  						value
+  					}
+  				}
+  			}
+  		}
+  	}
+  "
+}
+
 pub fn money_fields_fragment() {
   "
   fragment MoneyFields on MoneyV2 {
@@ -262,6 +369,123 @@ pub fn order_node_fields() {
       status
       test
     }
+  }
+  "
+}
+
+pub fn product_fragment() -> String {
+  "
+	fragment product on Product {
+		id
+		handle
+		availableForSale
+		title
+		description
+		descriptionHtml
+		vendor
+		options {
+			id
+			name
+			values
+		}
+		priceRange {
+			maxVariantPrice {
+				amount
+				currencyCode
+			}
+			minVariantPrice {
+				amount
+				currencyCode
+			}
+		}
+		compareAtPriceRange {
+			maxVariantPrice {
+				amount
+				currencyCode
+			}
+			minVariantPrice {
+				amount
+				currencyCode
+			}
+		}
+		variants(first: 250) {
+			edges {
+				node {
+					id
+					title
+					availableForSale
+					selectedOptions {
+						name
+						value
+					}
+					price {
+						amount
+						currencyCode
+					}
+				}
+			}
+		}
+		featuredImage {
+			...image
+		}
+		images(first: 20) {
+			edges {
+				node {
+					...image
+				}
+			}
+		}
+		seo {
+			...seo
+		}
+		metafields(
+		{ namespace: \"metafield\", key: \"width\" }
+						{ namespace: \"metafield\", key: \"height\" }
+						{ namespace: \"metafield\", key: \"thickness\" }
+						{ namespace: \"metafield\", key: \"pages\" }
+						{ namespace: \"metafield\", key: \"categories\" }
+						{ namespace: \"metafield\", key: \"language\" }
+						{ namespace: \"metafield\", key: \"format\" }
+						{ namespace: \"custom\", key: \"author\" }
+						{ namespace: \"custom\", key: \"publisher\" }
+						{ namespace: \"custom\", key: \"related-authors\" }
+						{ namespace: \"custom\", key: \"people-who-worked\" }
+						{ namespace: \"custom\", key: \"translator\" }
+						{ namespace: \"custom\", key: \"related-books\" }
+						{ namespace: \"shopify\", key: \"genre\" }
+						{ namespace: \"shopify\", key: \"book-cover-type\" }
+						{ namespace: \"shopify\", key: \"target-audience\" }
+					]
+		) {
+			key
+			namespace
+			value
+			type
+			references(first: 5) {
+				nodes {
+					... on Metaobject {
+						id
+						type
+						fields {
+							key
+							value
+						}
+					}
+				}
+			}
+		}
+		tags
+		updatedAt
+	}
+" <> image_fragment() <> seo_fragment()
+}
+
+pub fn seo_fragment() {
+  // GraphQL
+  "
+  fragment seo on SEO {
+  description
+  title
   }
   "
 }

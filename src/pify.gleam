@@ -1,4 +1,4 @@
-import fragments/products
+import fragments.{product_fragment}
 import gleam/dynamic/decode.{type Decoder}
 import gleam/http.{Post}
 import gleam/http/request
@@ -81,7 +81,7 @@ pub fn fetch(
 pub fn fetch_products(
   client: ShopifyClient,
 ) -> Result(ShopifyResult(Products), ShopifyError) {
-  let query = products.product_fragment()
+  let query = product_fragment()
   fetch(
     client: client,
     query: query,
@@ -94,7 +94,7 @@ pub fn fetch_product(
   client: ShopifyClient,
   handle: String,
 ) -> Result(ShopifyResult(Product), ShopifyError) {
-  let query = products.product_fragment()
+  let query = product_fragment()
   fetch(
     client: client,
     query: query,
