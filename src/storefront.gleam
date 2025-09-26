@@ -42,6 +42,49 @@ pub type CreateStorefrontApiClient {
   )
 }
 
+pub type ShopifyError {
+  BadUrl(String)
+  HttpError(Response(String))
+  JsonError(json.DecodeError)
+  NetworkError
+  UnhandledResponse(Response(String))
+  RateLimitError
+  ClientError(String)
+}
+
+// Base types
+//
+pub type StorefrontApiClientConfig {
+  StorefrontApiClientConfig(
+    store_domain: String,
+    api_version: Option(String),
+    access_token: AccessToken,
+    headers: #(String, List(#(String, String))),
+    api_url: String,
+    client_name: Option(String),
+    retries: Option(Int),
+  )
+}
+
+pub type ShopifyHandler(msg) {
+  ShopifyHandler(
+    /// Configuration for the client
+    config: StorefrontApiClientConfig,
+    /// Returns Storefront API specific headers needed to interact with the API.
+    /// If additional headers are provided, the custom headers will be included in the returned headers object.
+    get_headers: fn(Option(#(String, List(#(String, String))))) ->
+      #(String, List(#(String, String))),
+    // get_api_url: fn(Option(String)) -> String,
+    // Returns the shop specific API url.
+    // If an API version is provided, the returned URL will include the provided version,
+    // else the URL will include the API version set at client initialization.
+    /// Fetches data from Storefront API using the provided GQL operation string
+    /// and ApiClientRequestOptions object and returns the network response.
+    fetch: fn(String, Decoder(msg), Option(Json)) ->
+      Promise(Result(msg, ShopifyError)),
+  )
+}
+
 pub fn create_store_front_api_client(
   config: CreateStorefrontApiClient,
 ) -> Result(StorefrontApiClientConfig, ShopifyError) {
@@ -72,9 +115,7 @@ pub fn create_store_front_api_client(
   }
 }
 
-pub fn client(config: CreateStorefrontApiClient) -> ShopifyHandler(msg) {
-  let assert Ok(config) = create_store_front_api_client(config)
-
+pub fn handler(config: StorefrontApiClientConfig) -> ShopifyHandler(msg) {
   ShopifyHandler(
     config: config,
     get_headers: get_headers,
@@ -140,94 +181,9 @@ fn base(client: StorefrontApiClientConfig) -> Request(String) {
   |> request.set_header(access.0, access.1)
 }
 
-// Base types
-//
-pub type StorefrontApiClientConfig {
-  StorefrontApiClientConfig(
-    store_domain: String,
-    api_version: Option(String),
-    access_token: AccessToken,
-    headers: #(String, List(#(String, String))),
-    api_url: String,
-    client_name: Option(String),
-    retries: Option(Int),
-  )
-}
-
-/// Client ``request()`` response examples (from the official Shopify APP JS package).
-///
-/// Successful response:
-///
-/// {
-///   "data": {
-///     "product": {
-///       "id": "gid://shopify/Product/12345678912",
-///       "title": "Sample product # 1"
-///     }
-///   },
-///   "extensions": {
-///     "context": {
-///       "country": "US",
-///       "language": "EN"
-///     }
-///   }
-/// }
-///
-/// Error response
-/// {
-///  "errors": {
-///    "networkStatusCode": 401,
-///    "message": ""
-///  }
-/// }
-pub type ShopifyHandler(msg) {
-  ShopifyHandler(
-    /// Configuration for the client
-    config: StorefrontApiClientConfig,
-    /// Returns Storefront API specific headers needed to interact with the API.
-    /// If additional headers are provided, the custom headers will be included in the returned headers object.
-    get_headers: fn(Option(#(String, List(#(String, String))))) ->
-      #(String, List(#(String, String))),
-    // get_api_url: fn(Option(String)) -> String,
-    // Returns the shop specific API url.
-    // If an API version is provided, the returned URL will include the provided version,
-    // else the URL will include the API version set at client initialization.
-    /// Fetches data from Storefront API using the provided GQL operation string
-    /// and ApiClientRequestOptions object and returns the network response.
-    fetch: fn(String, Decoder(msg), Option(Json)) ->
-      Promise(Result(msg, ShopifyError)),
-  )
-}
-
 pub opaque type AccessToken {
   PublicAccessToken(String)
   PrivateAccessToken(String)
-}
-
-pub opaque type ApiClientRequestOptions(msg) {
-  ApiClientRequestOptions(
-    variables: Option(Json),
-    api_version: Option(String),
-    headers: Option(#(String, List(#(String, String)))),
-    retries: Option(Int),
-  )
-}
-
-pub opaque type ClientResponse(msg) {
-  ClientResponse(
-    data: Option(msg),
-    errors: Option(ShopifyResponseErrors(msg)),
-    extensions: Option(#(String, msg)),
-  )
-}
-
-pub opaque type ShopifyResponseErrors(msg) {
-  ShopifyResponseErrors(
-    network_status_code: Option(Int),
-    message: Option(String),
-    graphql_errors: Option(List(msg)),
-    response: Option(Response(String)),
-  )
 }
 
 pub opaque type CustomFetchApi {
@@ -257,34 +213,6 @@ pub opaque type LogContent {
   UnsupportedApiVersionLog
   HTTPResponseLog
   HTTPRetryLog
-}
-
-pub opaque type ClientStreamResponse(msg) {
-  ClientStreamResponse(
-    data: Option(msg),
-    errors: Option(ShopifyResponseErrors(msg)),
-    extensions: Option(#(String, msg)),
-    has_next: Bool,
-  )
-}
-
-pub opaque type ShopifyRequestOptions(msg) {
-  ShopifyRequestOptions(
-    variables: #(String, msg),
-    api_version: String,
-    headers: #(String, List(#(String, String))),
-    retries: Int,
-  )
-}
-
-pub type ShopifyError {
-  BadUrl(String)
-  HttpError(Response(String))
-  JsonError(json.DecodeError)
-  NetworkError
-  UnhandledResponse(Response(String))
-  RateLimitError
-  ClientError(String)
 }
 
 // Utils
@@ -512,11 +440,12 @@ fn reshape_products(products: List(ShopifyProduct)) -> List(Product) {
 const cookie_name = "cartId"
 
 pub fn create_cart(
-  client: ShopifyHandler(ShopifyCreateCartMutation),
+  config: StorefrontApiClientConfig,
   on_result: fn(Result(Cart, ShopifyError)) -> Nil,
 ) {
-  client.fetch(
-    create_cart_mutation(),
+  let handler = handler(config)
+  handler.fetch(
+    create_cart_mutation,
     shopify_create_cart_mutation_decoder(),
     None,
   )
@@ -1195,8 +1124,7 @@ pub type ShopifyCollection {
 
 // ADD TO CART MUTATIONS AND DECODERS
 
-fn add_to_cart_mutation() {
-  "
+const add_to_cart_mutation = "
   mutation addToCart($cartId: ID!, $lines: [CartLineInput!]!) {
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
@@ -1204,8 +1132,8 @@ fn add_to_cart_mutation() {
       }
     }
   }
-  " <> cart_fragment()
-}
+  "
+  <> cart_fragment
 
 pub type CartLinesAdd {
   CartLinesAdd(cart: ShopifyCart)
@@ -1284,8 +1212,7 @@ pub type ShopifyCartLinesAddOperation {
 
 // CREATE CART MUTATIONS AND DECODERS
 
-fn create_cart_mutation() {
-  "
+const create_cart_mutation = "
   mutation createCart($lineItems: [CartLineInput!]) {
     cartCreate(input: { lines: $lineItems }) {
       cart {
@@ -1293,8 +1220,8 @@ fn create_cart_mutation() {
       }
     }
   }
-  " <> cart_fragment()
-}
+  "
+  <> cart_fragment
 
 pub type ShopifyCreateCartMutation {
   ShopifyCreateCartMutation(data: ShopifyCreateCartData)
@@ -1327,8 +1254,7 @@ fn create_cart_decoder() -> decode.Decoder(CreateCart) {
 
 // REMOVE CART MUTATIONS AND DECODERS
 
-fn remove_from_cart_mutation() {
-  "
+const remove_from_cart_mutation = "
   mutation removeFromCart($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
@@ -1336,8 +1262,8 @@ fn remove_from_cart_mutation() {
       }
     }
   }
-  " <> cart_fragment()
-}
+  "
+  <> cart_fragment
 
 pub type ShopifyRemoveFromCartOperation {
   ShopifyRemoveFromCartOperation(
@@ -1403,8 +1329,7 @@ fn cart_lines_remove_decoder() -> decode.Decoder(CartLinesRemove) {
 
 // EDIT CART MUTATIONS AND DECODERS
 
-fn edit_cart_mutation() {
-  "
+const edit_cart_mutation = "
   mutation editCartItems($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
     cartLinesUpdate(cartId: $cartId, lines: $lines) {
       cart {
@@ -1412,8 +1337,8 @@ fn edit_cart_mutation() {
       }
     }
   }
-  " <> cart_fragment()
-}
+  "
+  <> cart_fragment
 
 pub type ShopifyUpdateCartOperation {
   ShopifyUpdateCartOperation(
@@ -1499,15 +1424,14 @@ fn shopify_update_cart_line_update_decoder() -> decode.Decoder(
 
 // 1. Cart
 
-fn get_cart_query() {
-  "
+const get_cart_query = "
   query getCart($cartId: ID!) {
     cart(id: $cartId) {
       ...cart
     }
   }
-  " <> cart_fragment()
-}
+  "
+  <> cart_fragment
 
 pub type ShopifyCartOperation {
   ShopifyCartOperation(
@@ -1549,15 +1473,14 @@ fn shopify_cart_operation_variables_decoder() -> decode.Decoder(
 
 // 2. Products
 
-fn get_product_query() {
-  "
+const get_product_query = "
   query getProduct($handle: String!) {
     product(handle: $handle) {
       ...product
     }
   }
-  " <> product_fragment()
-}
+  "
+  <> product_fragment
 
 pub type ShopifyProductOperation {
   ShopifyProductOperation(
@@ -1602,8 +1525,7 @@ fn shopify_product_operation_variables_decoder() -> decode.Decoder(
   decode.success(ShopifyProductOperationVariables(handle:))
 }
 
-fn get_products_query() {
-  "
+const get_products_query = "
   query getProducts($sortKey: ProductSortKeys, $reverse: Boolean, $query: String) {
     products(sortKey: $sortKey, reverse: $reverse, query: $query, first: 100) {
       edges {
@@ -1613,8 +1535,8 @@ fn get_products_query() {
       }
     }
   }
-  " <> product_fragment()
-}
+  "
+  <> product_fragment
 
 pub type ShopifyProductsOperation {
   ShopifyProductsOperation(
@@ -1680,15 +1602,14 @@ fn shopify_product_edges_decoder() -> decode.Decoder(Edge(ShopifyProduct)) {
   decode.success(Edge(node:))
 }
 
-fn get_product_recommendations_query() {
-  "
+const get_product_recommendations_query = "
   query getProductRecommendations($productId: ID!) {
     productRecommendations(productId: $productId) {
       ...product
     }
   }
-  " <> product_fragment()
-}
+  "
+  <> product_fragment
 
 pub opaque type ShopifyProductRecommendationsOperation {
   ShopifyProductRecommendationsOperation(
@@ -1740,8 +1661,7 @@ fn shopify_product_recommendations_operation_variables_decoder() -> decode.Decod
   decode.success(ShopifyProductRecommendationsOperationVariables(product_id:))
 }
 
-fn cart_fragment() {
-  "
+const cart_fragment = "
   	fragment cart on Cart {
   		id
   		checkoutUrl
@@ -1796,12 +1716,11 @@ fn cart_fragment() {
   		}
   		totalQuantity
   	}
-  " <> product_fragment()
-}
-
-fn image_fragment() {
-  // GraphQL
   "
+  <> product_fragment
+
+const image_fragment = // GraphQL
+"
 	fragment image on Image {
 		url
 		altText
@@ -1809,22 +1728,18 @@ fn image_fragment() {
 		height
 	}
   "
-}
 
-fn metafield_fragment() {
-  // GraphQL
-  "
+const metafield_fragment = // GraphQL
+"
   fragment metafield on Metafield {
   key
   value
   type
   }
   "
-}
 
-fn metaobject_fragment() {
-  // GraphQL
-  "
+const metaobject_fragment = // GraphQL
+"
   	fragment metaobject on Metaobject {
   		id
   		type
@@ -1845,19 +1760,15 @@ fn metaobject_fragment() {
   		}
   	}
   "
-}
 
-fn money_fields_fragment() {
-  "
+const money_fields_fragment = "
   fragment MoneyFields on MoneyV2 {
       amount
       currencyCode
     }
   "
-}
 
-fn money_bag_fields_fragment() {
-  "
+const money_bag_fields_fragment = "
     fragment MoneyBagFields on MoneyBag {
       shopMoney {
         ...MoneyFields
@@ -1867,10 +1778,8 @@ fn money_bag_fields_fragment() {
       }
     }
   "
-}
 
-fn line_items_fields_fragment() {
-  "
+const line_items_fields_fragment = "
   fragment LineItemFields on LineItem {
     id
     name
@@ -1921,10 +1830,8 @@ fn line_items_fields_fragment() {
       }
     }
   "
-}
 
-fn discount_application_fields_fragment() {
-  "
+const discount_application_fields_fragment = "
     fragment DiscountApplicationFields on DiscountApplication {
       allocationMethod
       targetSelection
@@ -1945,10 +1852,8 @@ fn discount_application_fields_fragment() {
       }
     }
   "
-}
 
-fn address_fields_fragment() {
-  "
+const address_fields_fragment = "
     fragment AddressFields on MailingAddressConnection {
       pageInfo {
         hasNextPage
@@ -1980,10 +1885,8 @@ fn address_fields_fragment() {
       }
     }
   "
-}
 
-fn customer_fields_fragments() {
-  "
+const customer_fields_fragments = "
     fragment CustomerFields on Customer {
     id
     displayName
@@ -2022,10 +1925,8 @@ fn customer_fields_fragments() {
     }
   }
   "
-}
 
-fn order_node_fields() {
-  "
+const order_node_fields = "
     fragment OrderNodeFields on Order {
       id
       name
@@ -2113,10 +2014,8 @@ fn order_node_fields() {
     }
   }
   "
-}
 
-fn product_fragment() -> String {
-  "
+const product_fragment = "
 	fragment product on Product {
 		id
 		handle
@@ -2219,15 +2118,13 @@ fn product_fragment() -> String {
 		tags
 		updatedAt
 	}
-" <> image_fragment() <> seo_fragment()
-}
+"
+  <> image_fragment
+  <> seo_fragment
 
-fn seo_fragment() {
-  // GraphQL
-  "
+const seo_fragment = "
   fragment seo on SEO {
   description
   title
   }
   "
-}
