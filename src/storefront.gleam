@@ -1,13 +1,12 @@
 import gleam/dynamic/decode.{type Decoder}
 import gleam/fetch
-import gleam/http.{Post}
+import gleam/http
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/javascript/promise.{type Promise}
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import gleam/string
 import snag
 
@@ -133,6 +132,7 @@ fn base(client: StorefrontApiClientConfig) -> Request(String) {
   }
   request.new()
   |> request.set_host(client.api_url)
+  |> request.set_method(http.Post)
   |> request.set_header("Content-Type", "application/json")
   |> request.set_header("Accept", "application/json")
   |> request.set_header("X-SDK-Variant", "storefront-api-client")
