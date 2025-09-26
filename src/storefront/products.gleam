@@ -2,6 +2,10 @@ import gleam/dynamic/decode
 import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/string
+import midas/task as t
+import snag
+import storefront.{type StorefrontApiClientConfig, handler}
 import storefront/fragments.{product_fragment}
 import storefront/utils.{
   type Connection, type Edge, type Image, type PriceRange, type ProductVariant,
@@ -31,38 +35,50 @@ import storefront/utils.{
 //   })
 // }
 
-// fn get_products(
-//   client: ShopifyClient,
-//   query: Option(String),
-//   reverse: Option(Bool),
-//   sort_key: Option(String),
-// ) -> Result(Option(List(Product)), ShopifyError) {
-//   let main_query = get_products_query()
-//   let query = option.unwrap(query, "")
-//   let reverse = option.unwrap(reverse, False)
-//   let sort_key = option.unwrap(sort_key, "")
+pub fn get_products(
+  config: StorefrontApiClientConfig,
+  query: Option(String),
+  reverse: Option(Bool),
+  sort_key: Option(String),
+) -> Result(List(Product), storefront.ShopifyError) {
+  let query = option.unwrap(query, "")
+  let reverse = option.unwrap(reverse, False)
+  let sort_key = option.unwrap(sort_key, "")
 
-//   let variables =
-//     json.object([
-//       #("query", json.string(query)),
-//       #("reverse", json.bool(reverse)),
-//       #("sortKey", json.string(sort_key)),
-//     ])
-
-//   fetch(
-//     client: client,
-//     query: main_query,
-//     variables: Some(variables),
-//     decoder: shopify_products_operation_decoder(),
-//   )
-//   |> result.map(fn(resp) {
-//     let products = resp.body.data.products
-//     case products {
-//       Some(product) -> Some(reshape_products(remove_edges_and_nodes(product)))
-//       None -> None
-//     }
-//   })
-// }
+  let handler = handler(config)
+  let variables =
+    json.object([
+      #("query", json.string(query)),
+      #("reverse", json.bool(reverse)),
+      #("sortKey", json.string(sort_key)),
+    ])
+  let fetcher =
+    handler.fetch(
+      get_products_query,
+      Some(variables),
+      get_products_operation_decoder(),
+    )
+  case fetcher {
+    t.Done(product) -> {
+      case product.data.products {
+        Some(product) -> Ok(reshape_products(remove_edges_and_nodes(product)))
+        None ->
+          Error(storefront.ClientError(
+            snag.new(string.inspect("We were unable to get the product"))
+            |> snag.layer("This effect is not handled in this environment")
+            |> snag.line_print,
+          ))
+      }
+    }
+    err -> {
+      Error(storefront.ClientError(
+        snag.new(string.inspect(err))
+        |> snag.layer("This effect is not handled in this environment")
+        |> snag.line_print,
+      ))
+    }
+  }
+}
 
 // fn get_products_recommendations(
 //   client: ShopifyClient,

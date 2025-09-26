@@ -1,9 +1,10 @@
 import gleam/dynamic/decode
-import gleam/javascript/promise
 import gleam/json
-import gleam/list
 import gleam/option.{type Option, None, Some}
-import storefront.{type ShopifyError, type StorefrontApiClientConfig, handler}
+import gleam/string
+import midas/task as t
+import snag
+import storefront.{type StorefrontApiClientConfig, handler}
 import storefront/fragments.{cart_fragment}
 import storefront/utils.{
   type Connection, type Cost, type Edge, type Image, type Money,
@@ -14,178 +15,193 @@ import wisp.{type Request}
 
 pub const cookie_name = "cartId"
 
-pub fn create_cart(
-  config: StorefrontApiClientConfig,
-  on_result: fn(Result(Cart, ShopifyError)) -> Nil,
-) -> Nil {
+pub fn create_cart(config: StorefrontApiClientConfig) {
   let handler = handler(config)
-  handler.fetch(
-    create_cart_mutation,
-    None,
-    shopify_create_cart_mutation_decoder(),
-  )
-  |> promise.map(fn(res) {
-    case res {
-      Ok(cart) -> Ok(reshape_cart(cart.data.cart_create.cart))
-      Error(err) -> Error(err)
+
+  let fetcher =
+    handler.fetch(
+      create_cart_mutation,
+      None,
+      shopify_create_cart_mutation_decoder(),
+    )
+  case fetcher {
+    t.Done(cart) -> {
+      Ok(reshape_cart(cart.data.cart_create.cart))
     }
-  })
-  |> promise.tap(on_result)
-  Nil
+    err -> {
+      Error(storefront.ClientError(
+        snag.new(string.inspect(err))
+        |> snag.layer("This effect is not handled in this environment")
+        |> snag.line_print,
+      ))
+    }
+  }
 }
 
 pub fn get_cart(
   config: StorefrontApiClientConfig,
   req: Request,
-  on_result: fn(Result(Cart, ShopifyError)) -> Nil,
-) -> Nil {
+) -> Result(Cart, storefront.ShopifyError) {
   let client = handler(config)
   case wisp.get_cookie(req, cookie_name, wisp.Signed) {
-    Error(Nil) -> Nil
+    Error(err) ->
+      Error(storefront.ClientError(
+        snag.new(string.inspect(err))
+        |> snag.layer("This effect is not handled in this environment")
+        |> snag.line_print,
+      ))
     Ok(id) -> {
       let query = get_cart_query
 
       let variables = json.object([#("cartId", json.string(id))])
 
-      let fetch =
+      let fetcher =
         client.fetch(query, Some(variables), shopify_cart_operation_decoder())
 
-      promise.map_try(fetch, fn(res) {
-        let cart = res.data.cart
-        case cart {
-          Some(cart) -> {
-            let x = reshape_cart(cart)
-            Ok(x)
+      case fetcher {
+        t.Done(cart) -> {
+          case cart.data.cart {
+            Some(cart) -> Ok(reshape_cart(cart))
+            None ->
+              Error(storefront.ClientError(
+                snag.new("We were unable to get the cart.")
+                |> snag.layer("This effect is not handled in this environment")
+                |> snag.line_print,
+              ))
           }
-          None -> Error(storefront.NetworkError)
         }
-      })
-      |> promise.tap(on_result)
-      Nil
-    }
-  }
-}
-
-pub fn add_to_cart(
-  config: StorefrontApiClientConfig,
-  lines: List(CartItem),
-  req: Request,
-  on_result: fn(Result(Cart, ShopifyError)) -> Nil,
-) -> Nil {
-  let client = handler(config)
-  case wisp.get_cookie(req, cookie_name, wisp.Signed) {
-    Error(Nil) -> create_cart(config, on_result)
-    Ok(id) -> {
-      let query = add_to_cart_mutation
-      let lines_json =
-        lines
-        |> list.map(fn(line) {
-          shopify_add_to_cart_operation_variables_lines_to_json(
-            ShopifyAddToCartOperationVariablesLines(
-              merchandise_id: line.merchandise.id,
-              quantity: line.quantity,
-            ),
-          )
-        })
-
-      let variables =
-        json.object([
-          #("cartId", json.string(id)),
-          #("lines", lines_json |> json.preprocessed_array),
-        ])
-
-      let fetch =
-        client.fetch(
-          query,
-          Some(variables),
-          shopify_add_to_cart_operation_decoder(),
-        )
-
-      promise.map_try(fetch, fn(res) {
-        let cart = Ok(reshape_cart(res.data.cart))
-        cart
-      })
-      |> promise.tap(on_result)
-      Nil
-    }
-  }
-}
-
-pub fn remove_from_cart(
-  config: StorefrontApiClientConfig,
-  lines_ids: List(String),
-  req: Request,
-  on_result: fn(Result(Cart, ShopifyError)) -> Nil,
-) -> Nil {
-  let client = handler(config)
-  case wisp.get_cookie(req, cookie_name, wisp.Signed) {
-    Error(Nil) -> create_cart(config, on_result)
-    Ok(id) -> {
-      let query = add_to_cart_mutation
-
-      let variables =
-        json.object([
-          #("cartId", json.string(id)),
-          #("lineIds", json.array(lines_ids, of: json.string)),
-        ])
-
-      let fetch =
-        client.fetch(
-          query,
-          Some(variables),
-          shopify_remove_from_cart_operation_decoder(),
-        )
-
-      promise.map_try(fetch, fn(res) {
-        let cart = Ok(reshape_cart(res.data.cart_lines_remove.cart))
-        cart
-      })
-      |> promise.tap(on_result)
-      Nil
-    }
-  }
-}
-
-pub fn update_cart(
-  config: StorefrontApiClientConfig,
-  lines: List(CartItem),
-  req: Request,
-  on_result: fn(Result(Cart, ShopifyError)) -> Nil,
-) {
-  let client = handler(config)
-  case wisp.get_cookie(req, cookie_name, wisp.Signed) {
-    Error(Nil) -> create_cart(config, on_result)
-    Ok(id) -> {
-      let query = edit_cart_mutation
-      let lines_json = {
-        lines
-        |> list.map(fn(line) {
-          shopify_update_cart_line_update_to_json(ShopifyUpdateCartLineUpdate(
-            id:,
-            merchandise_id: line.merchandise.id,
-            quantity: line.quantity,
+        err -> {
+          Error(storefront.ClientError(
+            snag.new(string.inspect(err))
+            |> snag.layer("This effect is not handled in this environment")
+            |> snag.line_print,
           ))
-        })
+        }
       }
-      let variables =
-        json.object([
-          #("cartId", json.string(id)),
-          #("lines", lines_json |> json.preprocessed_array),
-        ])
-      let fetch =
-        client.fetch(
-          query,
-          Some(variables),
-          shopify_update_cart_operation_decoder(),
-        )
-      promise.map_try(fetch, fn(res) {
-        Ok(reshape_cart(res.data.cart_lines_update.cart))
-      })
-      |> promise.tap(on_result)
-      Nil
     }
   }
 }
+
+// pub fn add_to_cart(
+//   config: StorefrontApiClientConfig,
+//   lines: List(CartItem),
+//   req: Request,
+//   on_result: fn(Result(Cart, ShopifyError)) -> Nil,
+// ) -> Nil {
+//   let client = handler(config)
+//   case wisp.get_cookie(req, cookie_name, wisp.Signed) {
+//     Error(Nil) -> create_cart(config, on_result)
+//     Ok(id) -> {
+//       let query = add_to_cart_mutation
+//       let lines_json =
+//         lines
+//         |> list.map(fn(line) {
+//           shopify_add_to_cart_operation_variables_lines_to_json(
+//             ShopifyAddToCartOperationVariablesLines(
+//               merchandise_id: line.merchandise.id,
+//               quantity: line.quantity,
+//             ),
+//           )
+//         })
+
+//       let variables =
+//         json.object([
+//           #("cartId", json.string(id)),
+//           #("lines", lines_json |> json.preprocessed_array),
+//         ])
+
+//       let fetch =
+//         client.fetch(
+//           query,
+//           Some(variables),
+//           shopify_add_to_cart_operation_decoder(),
+//         )
+
+//       promise.map_try(fetch, fn(res) {
+//         let cart = Ok(reshape_cart(res.data.cart))
+//         cart
+//       })
+//       |> promise.tap(on_result)
+//       Nil
+//     }
+//   }
+// }
+
+// pub fn remove_from_cart(
+//   config: StorefrontApiClientConfig,
+//   lines_ids: List(String),
+//   req: Request,
+//   on_result: fn(Result(Cart, ShopifyError)) -> Nil,
+// ) -> Nil {
+//   let client = handler(config)
+//   case wisp.get_cookie(req, cookie_name, wisp.Signed) {
+//     Error(Nil) -> create_cart(config, on_result)
+//     Ok(id) -> {
+//       let query = add_to_cart_mutation
+
+//       let variables =
+//         json.object([
+//           #("cartId", json.string(id)),
+//           #("lineIds", json.array(lines_ids, of: json.string)),
+//         ])
+
+//       let fetch =
+//         client.fetch(
+//           query,
+//           Some(variables),
+//           shopify_remove_from_cart_operation_decoder(),
+//         )
+
+//       promise.map_try(fetch, fn(res) {
+//         let cart = Ok(reshape_cart(res.data.cart_lines_remove.cart))
+//         cart
+//       })
+//       |> promise.tap(on_result)
+//       Nil
+//     }
+//   }
+// }
+
+// pub fn update_cart(
+//   config: StorefrontApiClientConfig,
+//   lines: List(CartItem),
+//   req: Request,
+//   on_result: fn(Result(Cart, ShopifyError)) -> Nil,
+// ) {
+//   let client = handler(config)
+//   case wisp.get_cookie(req, cookie_name, wisp.Signed) {
+//     Error(Nil) -> create_cart(config, on_result)
+//     Ok(id) -> {
+//       let query = edit_cart_mutation
+//       let lines_json = {
+//         lines
+//         |> list.map(fn(line) {
+//           shopify_update_cart_line_update_to_json(ShopifyUpdateCartLineUpdate(
+//             id:,
+//             merchandise_id: line.merchandise.id,
+//             quantity: line.quantity,
+//           ))
+//         })
+//       }
+//       let variables =
+//         json.object([
+//           #("cartId", json.string(id)),
+//           #("lines", lines_json |> json.preprocessed_array),
+//         ])
+//       let fetch =
+//         client.fetch(
+//           query,
+//           Some(variables),
+//           shopify_update_cart_operation_decoder(),
+//         )
+//       promise.map_try(fetch, fn(res) {
+//         Ok(reshape_cart(res.data.cart_lines_update.cart))
+//       })
+//       |> promise.tap(on_result)
+//       Nil
+//     }
+//   }
+// }
 
 pub fn reshape_cart(cart: ShopifyCart) -> Cart {
   let result = {
