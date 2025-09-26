@@ -1,6 +1,6 @@
 name = "pify"
 target = "javascript"
-version = "0.5.1"
+version = "0.3.0"
 description = "pify: some helpers to use gleam in your shopify project. for now, only for javascript"
 licences = ["Apache-2.0"]
 repository = { type = "github", user = "poldo11", repo = "pify" }
