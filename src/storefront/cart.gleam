@@ -1,17 +1,18 @@
 import gleam/dynamic/decode
+import gleam/http/request
 import gleam/json
+import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import midas/task as t
+import pify.{type StorefrontApiClientConfig, handler}
 import snag
-import storefront.{type StorefrontApiClientConfig, handler}
 import storefront/fragments.{cart_fragment}
 import storefront/utils.{
   type Connection, type Cost, type Edge, type Image, type Money,
   type SelectedOption, Connection, Edge, cost_decoder, image_decoder,
   money_decoder, remove_edges_and_nodes, selected_option_decoder,
 }
-import wisp.{type Request}
 
 pub const cookie_name = "cartId"
 
@@ -29,7 +30,7 @@ pub fn create_cart(config: StorefrontApiClientConfig) {
       Ok(reshape_cart(cart.data.cart_create.cart))
     }
     err -> {
-      Error(storefront.ClientError(
+      Error(pify.ClientError(
         snag.new(string.inspect(err))
         |> snag.layer("This effect is not handled in this environment")
         |> snag.line_print,
@@ -40,12 +41,17 @@ pub fn create_cart(config: StorefrontApiClientConfig) {
 
 pub fn get_cart(
   config: StorefrontApiClientConfig,
-  req: Request,
-) -> Result(Cart, storefront.ShopifyError) {
+  req: request.Request(Cart),
+) -> Result(Cart, pify.ShopifyError) {
   let client = handler(config)
-  case wisp.get_cookie(req, cookie_name, wisp.Signed) {
+  let try_cookies = {
+    request.get_cookies(req)
+    |> list.key_find("cartId")
+  }
+
+  case try_cookies {
     Error(err) ->
-      Error(storefront.ClientError(
+      Error(pify.ClientError(
         snag.new(string.inspect(err))
         |> snag.layer("This effect is not handled in this environment")
         |> snag.line_print,
@@ -63,7 +69,7 @@ pub fn get_cart(
           case cart.data.cart {
             Some(cart) -> Ok(reshape_cart(cart))
             None ->
-              Error(storefront.ClientError(
+              Error(pify.ClientError(
                 snag.new("We were unable to get the cart.")
                 |> snag.layer("This effect is not handled in this environment")
                 |> snag.line_print,
@@ -71,7 +77,7 @@ pub fn get_cart(
           }
         }
         err -> {
-          Error(storefront.ClientError(
+          Error(pify.ClientError(
             snag.new(string.inspect(err))
             |> snag.layer("This effect is not handled in this environment")
             |> snag.line_print,
@@ -247,76 +253,76 @@ pub const add_to_cart_mutation = "
   "
   <> cart_fragment
 
-pub opaque type CartLinesAdd {
-  CartLinesAdd(cart: ShopifyCart)
-}
+// pub opaque type CartLinesAdd {
+//   CartLinesAdd(cart: ShopifyCart)
+// }
 
-fn cart_lines_add_decoder() -> decode.Decoder(CartLinesAdd) {
-  use cart <- decode.field("cart", shopify_cart_decoder())
-  decode.success(CartLinesAdd(cart:))
-}
+// fn cart_lines_add_decoder() -> decode.Decoder(CartLinesAdd) {
+//   use cart <- decode.field("cart", shopify_cart_decoder())
+//   decode.success(CartLinesAdd(cart:))
+// }
 
-type ShopifyAddToCartOperation {
-  ShopifyAddToCartMutation(
-    data: CartLinesAdd,
-    variables: List(ShopifyAddToCartOperationVariables),
-  )
-}
+// type ShopifyAddToCartOperation {
+//   ShopifyAddToCartMutation(
+//     data: CartLinesAdd,
+//     variables: List(ShopifyAddToCartOperationVariables),
+//   )
+// }
 
-fn shopify_add_to_cart_operation_decoder() -> decode.Decoder(
-  ShopifyAddToCartOperation,
-) {
-  use data <- decode.field("data", cart_lines_add_decoder())
-  use variables <- decode.field(
-    "variables",
-    decode.list(shopify_add_to_cart_operation_variables_decoder()),
-  )
-  decode.success(ShopifyAddToCartMutation(data:, variables:))
-}
+// fn shopify_add_to_cart_operation_decoder() -> decode.Decoder(
+//   ShopifyAddToCartOperation,
+// ) {
+//   use data <- decode.field("data", cart_lines_add_decoder())
+//   use variables <- decode.field(
+//     "variables",
+//     decode.list(shopify_add_to_cart_operation_variables_decoder()),
+//   )
+//   decode.success(ShopifyAddToCartMutation(data:, variables:))
+// }
 
-fn shopify_add_to_cart_operation_variables_decoder() -> decode.Decoder(
-  ShopifyAddToCartOperationVariables,
-) {
-  use cart_id <- decode.field("cart_id", decode.string)
-  use lines <- decode.field(
-    "lines",
-    shopify_add_to_cart_operation_variables_lines_decoder(),
-  )
-  decode.success(ShopifyAddToCartOperationVariables(cart_id:, lines:))
-}
+// fn shopify_add_to_cart_operation_variables_decoder() -> decode.Decoder(
+//   ShopifyAddToCartOperationVariables,
+// ) {
+//   use cart_id <- decode.field("cart_id", decode.string)
+//   use lines <- decode.field(
+//     "lines",
+//     shopify_add_to_cart_operation_variables_lines_decoder(),
+//   )
+//   decode.success(ShopifyAddToCartOperationVariables(cart_id:, lines:))
+// }
 
-type ShopifyAddToCartOperationVariablesLines {
-  ShopifyAddToCartOperationVariablesLines(merchandise_id: String, quantity: Int)
-}
+// type ShopifyAddToCartOperationVariablesLines {
+//   ShopifyAddToCartOperationVariablesLines(merchandise_id: String, quantity: Int)
+// }
 
-fn shopify_add_to_cart_operation_variables_lines_to_json(
-  shopify_add_to_cart_operation_variables_lines: ShopifyAddToCartOperationVariablesLines,
-) -> json.Json {
-  let ShopifyAddToCartOperationVariablesLines(merchandise_id:, quantity:) =
-    shopify_add_to_cart_operation_variables_lines
-  json.object([
-    #("merchandise_id", json.string(merchandise_id)),
-    #("quantity", json.int(quantity)),
-  ])
-}
+// fn shopify_add_to_cart_operation_variables_lines_to_json(
+//   shopify_add_to_cart_operation_variables_lines: ShopifyAddToCartOperationVariablesLines,
+// ) -> json.Json {
+//   let ShopifyAddToCartOperationVariablesLines(merchandise_id:, quantity:) =
+//     shopify_add_to_cart_operation_variables_lines
+//   json.object([
+//     #("merchandise_id", json.string(merchandise_id)),
+//     #("quantity", json.int(quantity)),
+//   ])
+// }
 
-fn shopify_add_to_cart_operation_variables_lines_decoder() -> decode.Decoder(
-  ShopifyAddToCartOperationVariablesLines,
-) {
-  use merchandise_id <- decode.field("merchandise_id", decode.string)
-  use quantity <- decode.field("quantity", decode.int)
-  decode.success(ShopifyAddToCartOperationVariablesLines(
-    merchandise_id:,
-    quantity:,
-  ))
-}
+// fn shopify_add_to_cart_operation_variables_lines_decoder() -> decode.Decoder(
+//   ShopifyAddToCartOperationVariablesLines,
+// ) {
+//   use merchandise_id <- decode.field("merchandise_id", decode.string)
+//   use quantity <- decode.field("quantity", decode.int)
+//   decode.success(ShopifyAddToCartOperationVariablesLines(
+//     merchandise_id:,
+//     quantity:,
+//   ))
+// }
 
-type ShopifyAddToCartOperationVariables {
-  ShopifyAddToCartOperationVariables(
-    cart_id: String,
-    lines: ShopifyAddToCartOperationVariablesLines,
-  )
-}
+// type ShopifyAddToCartOperationVariables {
+//   ShopifyAddToCartOperationVariables(
+//     cart_id: String,
+//     lines: ShopifyAddToCartOperationVariablesLines,
+//   )
+// }
 
 pub const create_cart_mutation = "
   mutation createCart($lineItems: [CartLineInput!]) {
@@ -371,149 +377,149 @@ pub const remove_from_cart_mutation = "
   "
   <> cart_fragment
 
-type ShopifyRemoveFromCartOperation {
-  ShopifyRemoveFromCartOperation(
-    data: RemoveOperationData,
-    variables: ShopifyRemoveFromCartVariables,
-  )
-}
+// type ShopifyRemoveFromCartOperation {
+//   ShopifyRemoveFromCartOperation(
+//     data: RemoveOperationData,
+//     variables: ShopifyRemoveFromCartVariables,
+//   )
+// }
 
-fn shopify_remove_from_cart_operation_decoder() -> decode.Decoder(
-  ShopifyRemoveFromCartOperation,
-) {
-  use data <- decode.field("data", remove_operation_data_decoder())
-  use variables <- decode.field(
-    "variables",
-    shopify_remove_from_cart_variables_decoder(),
-  )
-  decode.success(ShopifyRemoveFromCartOperation(data:, variables:))
-}
+// fn shopify_remove_from_cart_operation_decoder() -> decode.Decoder(
+//   ShopifyRemoveFromCartOperation,
+// ) {
+//   use data <- decode.field("data", remove_operation_data_decoder())
+//   use variables <- decode.field(
+//     "variables",
+//     shopify_remove_from_cart_variables_decoder(),
+//   )
+//   decode.success(ShopifyRemoveFromCartOperation(data:, variables:))
+// }
 
-type ShopifyRemoveFromCartVariables {
-  ShopifyRemoveFromCartVariables(cart_id: String, line_ids: List(String))
-}
+// type ShopifyRemoveFromCartVariables {
+//   ShopifyRemoveFromCartVariables(cart_id: String, line_ids: List(String))
+// }
 
-fn shopify_remove_from_cart_variables_decoder() -> decode.Decoder(
-  ShopifyRemoveFromCartVariables,
-) {
-  use cart_id <- decode.field("cartId", decode.string)
-  use line_ids <- decode.field("lineIds", decode.list(decode.string))
-  decode.success(ShopifyRemoveFromCartVariables(cart_id:, line_ids:))
-}
+// fn shopify_remove_from_cart_variables_decoder() -> decode.Decoder(
+//   ShopifyRemoveFromCartVariables,
+// ) {
+//   use cart_id <- decode.field("cartId", decode.string)
+//   use line_ids <- decode.field("lineIds", decode.list(decode.string))
+//   decode.success(ShopifyRemoveFromCartVariables(cart_id:, line_ids:))
+// }
 
-type RemoveOperationData {
-  RemoveOperationData(cart_lines_remove: CartLinesRemove)
-}
+// type RemoveOperationData {
+//   RemoveOperationData(cart_lines_remove: CartLinesRemove)
+// }
 
-fn remove_operation_data_decoder() -> decode.Decoder(RemoveOperationData) {
-  use cart_lines_remove <- decode.field(
-    "cartLinesRemove",
-    cart_lines_remove_decoder(),
-  )
-  decode.success(RemoveOperationData(cart_lines_remove:))
-}
+// fn remove_operation_data_decoder() -> decode.Decoder(RemoveOperationData) {
+//   use cart_lines_remove <- decode.field(
+//     "cartLinesRemove",
+//     cart_lines_remove_decoder(),
+//   )
+//   decode.success(RemoveOperationData(cart_lines_remove:))
+// }
 
-type CartLinesRemove {
-  CartLinesRemove(cart: ShopifyCart)
-}
+// type CartLinesRemove {
+//   CartLinesRemove(cart: ShopifyCart)
+// }
 
-fn cart_lines_remove_decoder() -> decode.Decoder(CartLinesRemove) {
-  use cart <- decode.field("cart", shopify_cart_decoder())
-  decode.success(CartLinesRemove(cart:))
-}
+// fn cart_lines_remove_decoder() -> decode.Decoder(CartLinesRemove) {
+//   use cart <- decode.field("cart", shopify_cart_decoder())
+//   decode.success(CartLinesRemove(cart:))
+// }
 
-pub const edit_cart_mutation = "
-  mutation editCartItems($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
-    cartLinesUpdate(cartId: $cartId, lines: $lines) {
-      cart {
-        ...cart
-      }
-    }
-  }
-  "
-  <> cart_fragment
+// pub const edit_cart_mutation = "
+//   mutation editCartItems($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+//     cartLinesUpdate(cartId: $cartId, lines: $lines) {
+//       cart {
+//         ...cart
+//       }
+//     }
+//   }
+//   "
+//   <> cart_fragment
 
-type ShopifyUpdateCartOperation {
-  ShopifyUpdateCartOperation(
-    data: UpdateOperationData,
-    variables: ShopifyUpdateCartVariables,
-  )
-}
+// type ShopifyUpdateCartOperation {
+//   ShopifyUpdateCartOperation(
+//     data: UpdateOperationData,
+//     variables: ShopifyUpdateCartVariables,
+//   )
+// }
 
-fn shopify_update_cart_operation_decoder() -> decode.Decoder(
-  ShopifyUpdateCartOperation,
-) {
-  use data <- decode.field("data", update_operation_data_decoder())
-  use variables <- decode.field(
-    "variables",
-    shopify_update_cart_variables_decoder(),
-  )
-  decode.success(ShopifyUpdateCartOperation(data:, variables:))
-}
+// fn shopify_update_cart_operation_decoder() -> decode.Decoder(
+//   ShopifyUpdateCartOperation,
+// ) {
+//   use data <- decode.field("data", update_operation_data_decoder())
+//   use variables <- decode.field(
+//     "variables",
+//     shopify_update_cart_variables_decoder(),
+//   )
+//   decode.success(ShopifyUpdateCartOperation(data:, variables:))
+// }
 
-type UpdateOperationData {
-  UpdateOperationData(cart_lines_update: CartLinesUpdate)
-}
+// type UpdateOperationData {
+//   UpdateOperationData(cart_lines_update: CartLinesUpdate)
+// }
 
-fn update_operation_data_decoder() -> decode.Decoder(UpdateOperationData) {
-  use cart_lines_update <- decode.field(
-    "cartLinesUpdate",
-    cart_lines_update_decoder(),
-  )
-  decode.success(UpdateOperationData(cart_lines_update:))
-}
+// fn update_operation_data_decoder() -> decode.Decoder(UpdateOperationData) {
+//   use cart_lines_update <- decode.field(
+//     "cartLinesUpdate",
+//     cart_lines_update_decoder(),
+//   )
+//   decode.success(UpdateOperationData(cart_lines_update:))
+// }
 
-type CartLinesUpdate {
-  CartLinesUpdate(cart: ShopifyCart)
-}
+// type CartLinesUpdate {
+//   CartLinesUpdate(cart: ShopifyCart)
+// }
 
-fn cart_lines_update_decoder() -> decode.Decoder(CartLinesUpdate) {
-  use cart <- decode.field("cart", shopify_cart_decoder())
-  decode.success(CartLinesUpdate(cart:))
-}
+// fn cart_lines_update_decoder() -> decode.Decoder(CartLinesUpdate) {
+//   use cart <- decode.field("cart", shopify_cart_decoder())
+//   decode.success(CartLinesUpdate(cart:))
+// }
 
-type ShopifyUpdateCartVariables {
-  ShopifyUpdateCartVariables(
-    cart_id: String,
-    lines: List(ShopifyUpdateCartLineUpdate),
-  )
-}
+// type ShopifyUpdateCartVariables {
+//   ShopifyUpdateCartVariables(
+//     cart_id: String,
+//     lines: List(ShopifyUpdateCartLineUpdate),
+//   )
+// }
 
-fn shopify_update_cart_variables_decoder() -> decode.Decoder(
-  ShopifyUpdateCartVariables,
-) {
-  use cart_id <- decode.field("cartId", decode.string)
-  use lines <- decode.field(
-    "lines",
-    decode.list(shopify_update_cart_line_update_decoder()),
-  )
-  decode.success(ShopifyUpdateCartVariables(cart_id:, lines:))
-}
+// fn shopify_update_cart_variables_decoder() -> decode.Decoder(
+//   ShopifyUpdateCartVariables,
+// ) {
+//   use cart_id <- decode.field("cartId", decode.string)
+//   use lines <- decode.field(
+//     "lines",
+//     decode.list(shopify_update_cart_line_update_decoder()),
+//   )
+//   decode.success(ShopifyUpdateCartVariables(cart_id:, lines:))
+// }
 
-type ShopifyUpdateCartLineUpdate {
-  ShopifyUpdateCartLineUpdate(id: String, merchandise_id: String, quantity: Int)
-}
+// type ShopifyUpdateCartLineUpdate {
+//   ShopifyUpdateCartLineUpdate(id: String, merchandise_id: String, quantity: Int)
+// }
 
-fn shopify_update_cart_line_update_to_json(
-  shopify_update_cart_line_update: ShopifyUpdateCartLineUpdate,
-) -> json.Json {
-  let ShopifyUpdateCartLineUpdate(id:, merchandise_id:, quantity:) =
-    shopify_update_cart_line_update
-  json.object([
-    #("id", json.string(id)),
-    #("merchandiseId", json.string(merchandise_id)),
-    #("quantity", json.int(quantity)),
-  ])
-}
+// fn shopify_update_cart_line_update_to_json(
+//   shopify_update_cart_line_update: ShopifyUpdateCartLineUpdate,
+// ) -> json.Json {
+//   let ShopifyUpdateCartLineUpdate(id:, merchandise_id:, quantity:) =
+//     shopify_update_cart_line_update
+//   json.object([
+//     #("id", json.string(id)),
+//     #("merchandiseId", json.string(merchandise_id)),
+//     #("quantity", json.int(quantity)),
+//   ])
+// }
 
-fn shopify_update_cart_line_update_decoder() -> decode.Decoder(
-  ShopifyUpdateCartLineUpdate,
-) {
-  use id <- decode.field("id", decode.string)
-  use merchandise_id <- decode.field("merchandiseId", decode.string)
-  use quantity <- decode.field("quantity", decode.int)
-  decode.success(ShopifyUpdateCartLineUpdate(id:, merchandise_id:, quantity:))
-}
+// fn shopify_update_cart_line_update_decoder() -> decode.Decoder(
+//   ShopifyUpdateCartLineUpdate,
+// ) {
+//   use id <- decode.field("id", decode.string)
+//   use merchandise_id <- decode.field("merchandiseId", decode.string)
+//   use quantity <- decode.field("quantity", decode.int)
+//   decode.success(ShopifyUpdateCartLineUpdate(id:, merchandise_id:, quantity:))
+// }
 
 pub const get_cart_query = "
   query getCart($cartId: ID!) {
