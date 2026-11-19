@@ -1,0 +1,26 @@
+{
+  "data": {
+    "webhookSubscriptionCreate": {
+      "webhookSubscription": {
+        "id": "gid://shopify/WebhookSubscription/8800000003",
+        "topic": "ORDERS_UPDATED",
+        "uri": "https://erp.example.com/api/webhooks/shopify",
+        "apiVersion": {
+          "handle": "2026-07"
+        }
+      },
+      "userErrors": []
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 10,
+      "actualQueryCost": 10,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1990,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

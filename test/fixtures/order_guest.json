@@ -1,0 +1,160 @@
+{
+  "data": {
+    "order": {
+      "id": "gid://shopify/Order/820982911946154509",
+      "legacyResourceId": "820982911946154509",
+      "name": "#1002",
+      "createdAt": "2026-09-20T13:05:11Z",
+      "updatedAt": "2026-09-20T13:07:40Z",
+      "processedAt": "2026-09-20T13:05:10Z",
+      "cancelledAt": null,
+      "cancelReason": null,
+      "closedAt": null,
+      "test": false,
+      "taxesIncluded": true,
+      "paymentGatewayNames": ["manual"],
+      "currencyCode": "BRL",
+      "displayFinancialStatus": "PENDING",
+      "displayFulfillmentStatus": "UNFULFILLED",
+      "note": "Entregar na portaria",
+      "email": null,
+      "phone": null,
+      "currentSubtotalPriceSet": {
+        "shopMoney": {
+          "amount": "89.8",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentShippingPriceSet": {
+        "shopMoney": {
+          "amount": "15.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentTotalTaxSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentTotalDiscountsSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentTotalPriceSet": {
+        "shopMoney": {
+          "amount": "104.8",
+          "currencyCode": "BRL"
+        }
+      },
+      "subtotalPriceSet": null,
+      "totalShippingPriceSet": {
+        "shopMoney": {
+          "amount": "15.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "totalTaxSet": null,
+      "totalDiscountsSet": null,
+      "totalPriceSet": {
+        "shopMoney": {
+          "amount": "104.8",
+          "currencyCode": "BRL"
+        }
+      },
+      "customer": null,
+      "shippingAddress": {
+        "name": "Loja Exemplo",
+        "firstName": null,
+        "lastName": null,
+        "company": "Loja Exemplo",
+        "address1": "Rua Exemplo, 100",
+        "address2": "Apto 1",
+        "city": "Sao Paulo",
+        "province": "Sao Paulo",
+        "provinceCode": "SP",
+        "zip": "01001-000",
+        "country": "Brazil",
+        "countryCodeV2": "BR",
+        "phone": null
+      },
+      "billingAddress": null,
+      "localizedFields": {
+        "nodes": []
+      },
+      "lineItems": {
+        "nodes": [
+          {
+            "id": "gid://shopify/LineItem/10000000002",
+            "title": "Frete especial",
+            "name": "Frete especial",
+            "quantity": 1,
+            "currentQuantity": 1,
+            "sku": null,
+            "requiresShipping": false,
+            "variant": null,
+            "originalUnitPriceSet": {
+              "shopMoney": {
+                "amount": "5.0",
+                "currencyCode": "BRL"
+              }
+            },
+            "discountAllocations": [],
+            "totalDiscountSet": {
+              "shopMoney": {
+                "amount": "0.0",
+                "currencyCode": "BRL"
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/LineItem/10000000003",
+            "title": "O Livro de Exemplo",
+            "name": "O Livro de Exemplo - Brochura",
+            "quantity": 1,
+            "currentQuantity": 1,
+            "sku": null,
+            "requiresShipping": true,
+            "variant": {
+              "id": "gid://shopify/ProductVariant/4400000001",
+              "sku": null,
+              "barcode": null
+            },
+            "originalUnitPriceSet": {
+              "shopMoney": {
+                "amount": "49.9",
+                "currencyCode": "BRL"
+              }
+            },
+            "discountAllocations": [],
+            "totalDiscountSet": {
+              "shopMoney": {
+                "amount": "0.0",
+                "currencyCode": "BRL"
+              }
+            }
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": true
+        }
+      },
+      "shippingLines": {
+        "nodes": []
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 853,
+      "actualQueryCost": 30,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1970,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

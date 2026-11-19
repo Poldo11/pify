@@ -1,0 +1,24 @@
+{
+  "data": {
+    "shop": {
+      "name": "Loja Exemplo",
+      "myshopifyDomain": "loja-exemplo.myshopify.com",
+      "currencyCode": "BRL",
+      "taxesIncluded": true,
+      "plan": {
+        "publicDisplayName": "Basic"
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 2,
+      "actualQueryCost": 2,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1998,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "data": {
+    "locations": {
+      "nodes": [
+        {
+          "id": "gid://shopify/Location/6600000001",
+          "name": "Deposito Central",
+          "isActive": true,
+          "fulfillsOnlineOrders": true
+        },
+        {
+          "id": "gid://shopify/Location/6600000002",
+          "name": "Livraria",
+          "isActive": true,
+          "fulfillsOnlineOrders": false
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 52,
+      "actualQueryCost": 4,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1998,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

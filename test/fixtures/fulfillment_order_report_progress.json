@@ -1,0 +1,12 @@
+{
+  "data": {
+    "fulfillmentOrderReportProgress": {
+      "fulfillmentOrder": {
+        "id": "gid://shopify/FulfillmentOrder/6100000001",
+        "status": "IN_PROGRESS",
+        "supportedActions": [{"action": "CREATE_FULFILLMENT"}, {"action": "MARK_AS_OPEN"}]
+      },
+      "userErrors": []
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "order_edit": {
+    "id": 78912328,
+    "app_id": null,
+    "created_at": "2026-09-20T10:30:00-03:00",
+    "committed_at": "2026-09-20T10:31:00-03:00",
+    "notify_customer": false,
+    "order_id": 820982911946154508,
+    "staff_note": "",
+    "user_id": null,
+    "line_items": {
+      "additions": [
+        {
+          "id": 1000000004,
+          "delta": 1
+        }
+      ],
+      "removals": []
+    },
+    "discounts": {
+      "line_item": {
+        "additions": [],
+        "removals": []
+      }
+    },
+    "shipping_lines": {
+      "additions": [],
+      "removals": []
+    }
+  }
+}

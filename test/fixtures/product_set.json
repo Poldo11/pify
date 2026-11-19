@@ -1,0 +1,70 @@
+{
+  "data": {
+    "productSet": {
+      "product": {
+        "id": "gid://shopify/Product/7700000010",
+        "descriptionHtml": "<p>Um romance.</p>",
+        "options": [
+          {
+            "name": "Formato",
+            "values": [
+              "Brochura",
+              "Capa dura"
+            ]
+          }
+        ],
+        "variants": {
+          "nodes": [
+            {
+              "id": "gid://shopify/ProductVariant/4400000010",
+              "sku": "9786500000010",
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/5500000010",
+                "tracked": true
+              },
+              "selectedOptions": [
+                {
+                  "name": "Formato",
+                  "value": "Brochura"
+                }
+              ]
+            },
+            {
+              "id": "gid://shopify/ProductVariant/4400000011",
+              "sku": "9786500000011",
+              "inventoryItem": {
+                "id": "gid://shopify/InventoryItem/5500000011",
+                "tracked": true
+              },
+              "selectedOptions": [
+                {
+                  "name": "Formato",
+                  "value": "Capa dura"
+                }
+              ]
+            }
+          ]
+        },
+        "media": {
+          "nodes": [
+            {
+              "id": "gid://shopify/MediaImage/3300000010"
+            }
+          ]
+        }
+      },
+      "userErrors": []
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 312,
+      "actualQueryCost": 22,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1978,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

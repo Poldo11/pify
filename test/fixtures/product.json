@@ -1,0 +1,66 @@
+{
+  "data": {
+    "product": {
+      "id": "gid://shopify/Product/7700000010",
+      "descriptionHtml": "<p>Um romance.</p>",
+      "options": [
+        {
+          "name": "Title",
+          "values": [
+            "Default Title"
+          ],
+          "linkedMetafield": null
+        },
+        {
+          "name": "Formato",
+          "values": [
+            "Brochura"
+          ],
+          "linkedMetafield": {
+            "namespace": "shopify",
+            "key": "book-cover-type"
+          }
+        }
+      ],
+      "variants": {
+        "nodes": [
+          {
+            "id": "gid://shopify/ProductVariant/4400000010",
+            "sku": null,
+            "inventoryItem": {
+              "id": "gid://shopify/InventoryItem/5500000010",
+              "tracked": true
+            },
+            "selectedOptions": [
+              {
+                "name": "Title",
+                "value": "Default Title"
+              }
+            ]
+          }
+        ]
+      },
+      "media": {
+        "nodes": [
+          {
+            "id": "gid://shopify/MediaImage/3300000010"
+          },
+          {
+            "id": "gid://shopify/MediaImage/3300000011"
+          }
+        ]
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 303,
+      "actualQueryCost": 6,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1994,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

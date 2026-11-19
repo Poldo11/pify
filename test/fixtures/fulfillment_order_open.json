@@ -1,0 +1,12 @@
+{
+  "data": {
+    "fulfillmentOrderOpen": {
+      "fulfillmentOrder": {
+        "id": "gid://shopify/FulfillmentOrder/6100000001",
+        "status": "OPEN",
+        "supportedActions": [{"action": "CREATE_FULFILLMENT"}, {"action": "REPORT_PROGRESS"}]
+      },
+      "userErrors": []
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "access_token": "shpat_redacted",
+  "scope": "read_orders,write_inventory,read_locations,write_products",
+  "expires_in": 86399
+}

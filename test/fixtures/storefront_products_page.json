@@ -1,0 +1,146 @@
+{
+  "data": {
+    "products": {
+      "nodes": [
+        {
+          "id": "gid://shopify/Product/7700000010",
+          "handle": "o-processo",
+          "title": "O processo",
+          "description": "Um romance.",
+          "descriptionHtml": "<p>Um romance.</p>",
+          "vendor": "Editora Exemplo",
+          "productType": "Livro",
+          "tags": [
+            "romance"
+          ],
+          "availableForSale": true,
+          "updatedAt": "2026-11-01T12:00:00Z",
+          "options": [
+            {
+              "id": "gid://shopify/ProductOption/1",
+              "name": "Formato",
+              "optionValues": [
+                {
+                  "name": "Brochura"
+                },
+                {
+                  "name": "Capa dura"
+                }
+              ]
+            }
+          ],
+          "priceRange": {
+            "minVariantPrice": {
+              "amount": "49.9",
+              "currencyCode": "BRL"
+            },
+            "maxVariantPrice": {
+              "amount": "79.9",
+              "currencyCode": "BRL"
+            }
+          },
+          "compareAtPriceRange": {
+            "minVariantPrice": {
+              "amount": "0.0",
+              "currencyCode": "BRL"
+            },
+            "maxVariantPrice": {
+              "amount": "59.9",
+              "currencyCode": "BRL"
+            }
+          },
+          "featuredImage": {
+            "url": "https://cdn.shopify.com/s/files/capa-1.jpg",
+            "altText": null,
+            "width": 800,
+            "height": 1200
+          },
+          "images": {
+            "nodes": [
+              {
+                "url": "https://cdn.shopify.com/s/files/capa-1.jpg",
+                "altText": null,
+                "width": 800,
+                "height": 1200
+              },
+              {
+                "url": "https://cdn.shopify.com/s/files/capa-2.jpg",
+                "altText": null,
+                "width": 800,
+                "height": 1200
+              }
+            ]
+          },
+          "variants": {
+            "nodes": [
+              {
+                "id": "gid://shopify/ProductVariant/4400000010",
+                "title": "Brochura",
+                "sku": "9786500000010",
+                "availableForSale": true,
+                "price": {
+                  "amount": "49.9",
+                  "currencyCode": "BRL"
+                },
+                "compareAtPrice": {
+                  "amount": "59.9",
+                  "currencyCode": "BRL"
+                },
+                "selectedOptions": [
+                  {
+                    "name": "Formato",
+                    "value": "Brochura"
+                  }
+                ],
+                "image": null
+              },
+              {
+                "id": "gid://shopify/ProductVariant/4400000011",
+                "title": "Capa dura",
+                "sku": null,
+                "availableForSale": false,
+                "price": {
+                  "amount": "79.9",
+                  "currencyCode": "BRL"
+                },
+                "compareAtPrice": null,
+                "selectedOptions": [
+                  {
+                    "name": "Formato",
+                    "value": "Capa dura"
+                  }
+                ],
+                "image": {
+                  "url": "https://cdn.shopify.com/s/files/capa-2.jpg",
+                  "altText": null,
+                  "width": 800,
+                  "height": 1200
+                }
+              }
+            ],
+            "pageInfo": {
+              "hasNextPage": true
+            }
+          },
+          "seo": {
+            "title": null,
+            "description": "Um romance."
+          },
+          "metafields": [
+            {
+              "namespace": "custom",
+              "key": "author",
+              "value": "Autora Exemplo",
+              "type": "single_line_text_field"
+            },
+            null
+          ]
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": true,
+        "endCursor": "eyJsYXN0IjoxfQ=="
+      }
+    }
+  }
+}

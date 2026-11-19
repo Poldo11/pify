@@ -1,0 +1,25 @@
+{
+  "data": {
+    "inventorySetQuantities": {
+      "inventoryAdjustmentGroup": null,
+      "userErrors": [
+        {
+          "code": "IDEMPOTENCY_CONCURRENT_REQUEST",
+          "field": null,
+          "message": "A request with this idempotency key is already in progress"
+        }
+      ]
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 11,
+      "actualQueryCost": 10,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1990,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

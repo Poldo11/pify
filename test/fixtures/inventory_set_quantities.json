@@ -1,0 +1,30 @@
+{
+  "data": {
+    "inventorySetQuantities": {
+      "inventoryAdjustmentGroup": {
+        "changes": [
+          {
+            "name": "available",
+            "delta": -3
+          },
+          {
+            "name": "on_hand",
+            "delta": -3
+          }
+        ]
+      },
+      "userErrors": []
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 11,
+      "actualQueryCost": 10,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1990,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

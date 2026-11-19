@@ -1,0 +1,66 @@
+{
+  "data": {
+    "productVariants": {
+      "nodes": [
+        {
+          "id": "gid://shopify/ProductVariant/4400000001",
+          "sku": "9786500000001",
+          "barcode": "9786500000001",
+          "price": "49.90",
+          "compareAtPrice": "59.90",
+          "inventoryPolicy": "CONTINUE",
+          "product": {
+            "id": "gid://shopify/Product/7700000001"
+          },
+          "inventoryItem": {
+            "id": "gid://shopify/InventoryItem/5500000001",
+            "tracked": true
+          }
+        },
+        {
+          "id": "gid://shopify/ProductVariant/4400000002",
+          "sku": "9786500000001-CAPA",
+          "barcode": "9786500000001-CAPA",
+          "price": "79.90",
+          "compareAtPrice": null,
+          "product": {
+            "id": "gid://shopify/Product/7700000001"
+          },
+          "inventoryItem": {
+            "id": "gid://shopify/InventoryItem/5500000002",
+            "tracked": true
+          }
+        },
+        {
+          "id": "gid://shopify/ProductVariant/4400000003",
+          "sku": "9786500000002",
+          "barcode": "9786500000002",
+          "price": "39.9",
+          "compareAtPrice": null,
+          "product": {
+            "id": "gid://shopify/Product/7700000001"
+          },
+          "inventoryItem": {
+            "id": "gid://shopify/InventoryItem/5500000003",
+            "tracked": false
+          }
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 252,
+      "actualQueryCost": 4,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1998,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

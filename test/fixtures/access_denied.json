@@ -1,0 +1,36 @@
+{
+  "data": {
+    "order": null
+  },
+  "errors": [
+    {
+      "message": "Access denied for customer field. Required access: `read_customers` access scope.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 120
+        }
+      ],
+      "path": [
+        "order",
+        "customer"
+      ],
+      "extensions": {
+        "code": "ACCESS_DENIED",
+        "documentation": "https://shopify.dev/api/usage/access-scopes",
+        "requiredAccess": "`read_customers` access scope."
+      }
+    }
+  ],
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 853,
+      "actualQueryCost": 10,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1990,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "data": {
+    "cart": {
+      "id": "gid://shopify/Cart/c1-exemplo?key=k",
+      "checkoutUrl": "https://loja-exemplo.myshopify.com/cart/c/c1-exemplo?key=k",
+      "totalQuantity": 2,
+      "note": null,
+      "cost": {
+        "subtotalAmount": {
+          "amount": "99.8",
+          "currencyCode": "BRL"
+        },
+        "totalAmount": {
+          "amount": "99.8",
+          "currencyCode": "BRL"
+        }
+      },
+      "lines": {
+        "nodes": [
+          {
+            "id": "gid://shopify/CartLine/l1",
+            "quantity": 2,
+            "attributes": [
+              {
+                "key": "dedicatória",
+                "value": null
+              }
+            ],
+            "cost": {
+              "totalAmount": {
+                "amount": "99.8",
+                "currencyCode": "BRL"
+              }
+            },
+            "merchandise": {
+              "id": "gid://shopify/ProductVariant/4400000010",
+              "title": "Brochura",
+              "sku": "9786500000010",
+              "availableForSale": true,
+              "price": {
+                "amount": "49.9",
+                "currencyCode": "BRL"
+              },
+              "compareAtPrice": null,
+              "selectedOptions": [
+                {
+                  "name": "Formato",
+                  "value": "Brochura"
+                }
+              ],
+              "image": {
+                "url": "https://cdn.shopify.com/s/files/capa-1.jpg",
+                "altText": null,
+                "width": 800,
+                "height": 1200
+              },
+              "product": {
+                "id": "gid://shopify/Product/7700000010",
+                "handle": "o-processo",
+                "title": "O processo"
+              }
+            }
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": false
+        }
+      }
+    }
+  }
+}

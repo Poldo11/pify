@@ -1,0 +1,1 @@
+{"data": {"fulfillmentCancel": {"fulfillment": null, "userErrors": [{"field": ["id"], "message": "Fulfillment cannot be cancelled."}]}}}

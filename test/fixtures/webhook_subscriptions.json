@@ -1,0 +1,39 @@
+{
+  "data": {
+    "webhookSubscriptions": {
+      "nodes": [
+        {
+          "id": "gid://shopify/WebhookSubscription/8800000001",
+          "topic": "ORDERS_CREATE",
+          "uri": "https://erp.example.com/api/webhooks/shopify",
+          "apiVersion": {
+            "handle": "2026-07"
+          }
+        },
+        {
+          "id": "gid://shopify/WebhookSubscription/8800000002",
+          "topic": "ORDERS_DELETE",
+          "uri": "https://erp.example.com/api/webhooks/shopify",
+          "apiVersion": {
+            "handle": "2026-04"
+          }
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 102,
+      "actualQueryCost": 4,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1998,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

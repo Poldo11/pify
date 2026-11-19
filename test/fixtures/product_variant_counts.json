@@ -1,0 +1,31 @@
+{
+  "data": {
+    "nodes": [
+      {
+        "id": "gid://shopify/Product/7700000010",
+        "variantsCount": {
+          "count": 2
+        }
+      },
+      null,
+      {},
+      {
+        "id": "gid://shopify/Product/7700000012",
+        "variantsCount": {
+          "count": 1
+        }
+      }
+    ]
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 4,
+      "actualQueryCost": 4,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1996,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

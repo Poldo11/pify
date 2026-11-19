@@ -1,0 +1,26 @@
+{
+  "data": {
+    "productVariantsBulkUpdate": {
+      "productVariants": [
+        {
+          "id": "gid://shopify/ProductVariant/4400000001",
+          "price": "44.90",
+          "compareAtPrice": null,
+          "barcode": "9786500000001"
+        }
+      ],
+      "userErrors": []
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 11,
+      "actualQueryCost": 10,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1990,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

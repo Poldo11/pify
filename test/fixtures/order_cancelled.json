@@ -1,0 +1,206 @@
+{
+  "data": {
+    "order": {
+      "id": "gid://shopify/Order/820982911946154510",
+      "legacyResourceId": "820982911946154510",
+      "name": "#1003",
+      "createdAt": "2026-09-20T13:05:11Z",
+      "updatedAt": "2026-09-20T13:07:40Z",
+      "processedAt": "2026-09-20T13:05:10Z",
+      "cancelledAt": "2026-09-21T09:00:00Z",
+      "cancelReason": "CUSTOMER",
+      "closedAt": "2026-09-21T09:00:01Z",
+      "test": true,
+      "taxesIncluded": false,
+      "paymentGatewayNames": ["bogus"],
+      "currencyCode": "BRL",
+      "displayFinancialStatus": "REFUNDED",
+      "displayFulfillmentStatus": "RESTOCKED",
+      "note": null,
+      "email": "maria@example.com",
+      "phone": null,
+      "currentSubtotalPriceSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentShippingPriceSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentTotalTaxSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentTotalDiscountsSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "currentTotalPriceSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "subtotalPriceSet": {
+        "shopMoney": {
+          "amount": "89.8",
+          "currencyCode": "BRL"
+        }
+      },
+      "totalShippingPriceSet": {
+        "shopMoney": {
+          "amount": "15.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "totalTaxSet": {
+        "shopMoney": {
+          "amount": "0.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "totalDiscountsSet": {
+        "shopMoney": {
+          "amount": "10.0",
+          "currencyCode": "BRL"
+        }
+      },
+      "totalPriceSet": {
+        "shopMoney": {
+          "amount": "104.8",
+          "currencyCode": "BRL"
+        }
+      },
+      "customer": {
+        "id": "gid://shopify/Customer/115310627314723954",
+        "firstName": "Maria",
+        "lastName": "Silva",
+        "displayName": "Maria Silva",
+        "defaultEmailAddress": {
+          "emailAddress": "maria@example.com"
+        },
+        "defaultPhoneNumber": {
+          "phoneNumber": "+5511999990000"
+        }
+      },
+      "shippingAddress": {
+        "name": "Maria Silva",
+        "firstName": "Maria",
+        "lastName": "Silva",
+        "company": null,
+        "address1": "Rua Exemplo, 100",
+        "address2": "Apto 1",
+        "city": "Sao Paulo",
+        "province": "Sao Paulo",
+        "provinceCode": "SP",
+        "zip": "01001-000",
+        "country": "Brazil",
+        "countryCodeV2": "BR",
+        "phone": "+5511999990000"
+      },
+      "billingAddress": {
+        "name": "Maria Silva",
+        "firstName": "Maria",
+        "lastName": "Silva",
+        "company": null,
+        "address1": "Rua Exemplo, 100",
+        "address2": "Apto 1",
+        "city": "Sao Paulo",
+        "province": "Sao Paulo",
+        "provinceCode": "SP",
+        "zip": "01001-000",
+        "country": "Brazil",
+        "countryCodeV2": "BR",
+        "phone": "+5511999990000"
+      },
+      "localizedFields": {
+        "nodes": [
+          {
+            "key": "TAX_CREDENTIAL_BR",
+            "value": "000.000.000-00",
+            "countryCode": "BR",
+            "purpose": "TAX",
+            "title": "CPF/CNPJ"
+          }
+        ]
+      },
+      "lineItems": {
+        "nodes": [
+          {
+            "id": "gid://shopify/LineItem/10000000001",
+            "title": "O Livro de Exemplo",
+            "name": "O Livro de Exemplo - Brochura",
+            "quantity": 2,
+            "currentQuantity": 0,
+            "sku": "9786500000001",
+            "requiresShipping": true,
+            "variant": {
+              "id": "gid://shopify/ProductVariant/4400000001",
+              "sku": "9786500000001",
+              "barcode": "9786500000001"
+            },
+            "originalUnitPriceSet": {
+              "shopMoney": {
+                "amount": "49.9",
+                "currencyCode": "BRL"
+              }
+            },
+            "discountAllocations": [
+              {
+                "allocatedAmountSet": {
+                  "shopMoney": {
+                    "amount": "10.0",
+                    "currencyCode": "BRL"
+                  }
+                }
+              }
+            ],
+            "totalDiscountSet": {
+              "shopMoney": {
+                "amount": "10.0",
+                "currencyCode": "BRL"
+              }
+            }
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": false
+        }
+      },
+      "shippingLines": {
+        "nodes": [
+          {
+            "title": "PAC",
+            "code": "PAC",
+            "source": "correios",
+            "originalPriceSet": {
+              "shopMoney": {
+                "amount": "15.0",
+                "currencyCode": "BRL"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 853,
+      "actualQueryCost": 32,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1970,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

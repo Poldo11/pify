@@ -1,16 +1,20 @@
 name = "pify"
-version = "1.0.0"
-description = "pify: some helpers to use gleam in your shopify project."
+version = "2.0.0"
+
+description = "Shopify's GraphQL Admin API, Storefront API and webhooks, as midas effects"
 licences = ["Apache-2.0"]
 repository = { type = "github", user = "poldo11", repo = "pify" }
+links = [
+  { title = "Shopify GraphQL Admin API", href = "https://shopify.dev/docs/api/admin-graphql" },
+  { title = "Shopify Storefront API", href = "https://shopify.dev/docs/api/storefront" },
+]
 
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"
-gleam_http = ">= 4.2.0 and < 5.0.0"
-gleam_fetch = ">= 1.3.0 and < 2.0.0"
-gleam_json = ">= 3.0.2 and < 4.0.0"
-snag = ">= 1.1.0 and < 2.0.0"
-midas = ">= 1.7.0 and < 2.0.0"
+gleam_json = ">= 3.1.0 and < 4.0.0"
+gleam_http = ">= 4.3.0 and < 5.0.0"
+gleam_crypto = ">= 1.5.0 and < 2.0.0"
+midas = ">= 2.0.0 and < 3.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

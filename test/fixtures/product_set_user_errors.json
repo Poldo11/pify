@@ -1,0 +1,1 @@
+{"data": {"productSet": {"product": null, "userErrors": [{"field": ["input", "handle"], "message": "Handle 'o-processo' already in use. Please provide a new handle.", "code": "HANDLE_NOT_UNIQUE"}]}}}

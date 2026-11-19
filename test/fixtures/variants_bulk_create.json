@@ -1,0 +1,1 @@
+{"data": {"productVariantsBulkCreate": {"productVariants": [{"id": "gid://shopify/ProductVariant/4400000012", "sku": "9786500000012", "inventoryItem": {"id": "gid://shopify/InventoryItem/5500000012", "tracked": false}, "selectedOptions": [{"name": "Formato", "value": "E-book"}]}], "userErrors": []}}}

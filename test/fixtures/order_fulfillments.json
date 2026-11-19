@@ -1,0 +1,54 @@
+{
+  "data": {
+    "order": {
+      "fulfillmentOrders": {
+        "nodes": [
+          {
+            "id": "gid://shopify/FulfillmentOrder/6100000001",
+            "status": "OPEN",
+            "assignedLocation": {"location": {"id": "gid://shopify/Location/8800000001"}},
+            "fulfillmentHolds": [],
+            "supportedActions": [{"action": "CREATE_FULFILLMENT"}, {"action": "REPORT_PROGRESS"}, {"action": "HOLD"}],
+            "lineItems": {
+              "nodes": [
+                {"id": "gid://shopify/FulfillmentOrderLineItem/6200000001", "sku": "9786500000001", "remainingQuantity": 2, "lineItem": {"id": "gid://shopify/LineItem/3300000001"}},
+                {"id": "gid://shopify/FulfillmentOrderLineItem/6200000002", "sku": null, "remainingQuantity": 0, "lineItem": {"id": "gid://shopify/LineItem/3300000002"}}
+              ],
+              "pageInfo": {"hasNextPage": false}
+            }
+          },
+          {
+            "id": "gid://shopify/FulfillmentOrder/6100000002",
+            "status": "ON_HOLD",
+            "assignedLocation": {"location": null},
+            "fulfillmentHolds": [{"id": "gid://shopify/FulfillmentHold/6300000001", "reason": "INVENTORY_OUT_OF_STOCK"}],
+            "supportedActions": [{"action": "RELEASE_HOLD"}, {"action": "SOMETHING_NEW"}],
+            "lineItems": {"nodes": [], "pageInfo": {"hasNextPage": false}}
+          }
+        ],
+        "pageInfo": {"hasNextPage": false}
+      },
+      "fulfillments": [
+        {
+          "id": "gid://shopify/Fulfillment/7100000001",
+          "status": "SUCCESS",
+          "displayStatus": "DELIVERED",
+          "trackingInfo": [{"number": "AA000000005BR"}, {"number": null}],
+          "fulfillmentLineItems": {
+            "nodes": [
+              {"quantity": 1, "lineItem": {"id": "gid://shopify/LineItem/3300000002", "sku": "9786500000002"}}
+            ],
+            "pageInfo": {"hasNextPage": false}
+          }
+        },
+        {
+          "id": "gid://shopify/Fulfillment/7100000002",
+          "status": "CANCELLED",
+          "displayStatus": null,
+          "trackingInfo": [],
+          "fulfillmentLineItems": {"nodes": [], "pageInfo": {"hasNextPage": false}}
+        }
+      ]
+    }
+  }
+}

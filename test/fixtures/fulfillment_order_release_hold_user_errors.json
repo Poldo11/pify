@@ -1,0 +1,8 @@
+{
+  "data": {
+    "fulfillmentOrderReleaseHold": {
+      "fulfillmentOrder": null,
+      "userErrors": [{"field": ["id"], "message": "The fulfillment order is not on hold."}]
+    }
+  }
+}

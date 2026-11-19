@@ -1,0 +1,33 @@
+{
+  "data": {
+    "nodes": [
+      {
+        "id": "gid://shopify/InventoryItem/5500000001",
+        "inventoryLevel": {
+          "quantities": [
+            {
+              "name": "available",
+              "quantity": 12
+            }
+          ]
+        }
+      },
+      {
+        "id": "gid://shopify/InventoryItem/5500000002",
+        "inventoryLevel": null
+      },
+      null
+    ]
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 8,
+      "actualQueryCost": 5,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1998,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}

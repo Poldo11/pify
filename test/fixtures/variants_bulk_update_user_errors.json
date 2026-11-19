@@ -1,0 +1,29 @@
+{
+  "data": {
+    "productVariantsBulkUpdate": {
+      "productVariants": null,
+      "userErrors": [
+        {
+          "field": [
+            "variants",
+            "0",
+            "price"
+          ],
+          "message": "Price must be greater than or equal to 0",
+          "code": "GREATER_THAN_OR_EQUAL_TO"
+        }
+      ]
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 11,
+      "actualQueryCost": 10,
+      "throttleStatus": {
+        "maximumAvailable": 2000.0,
+        "currentlyAvailable": 1990,
+        "restoreRate": 100.0
+      }
+    }
+  }
+}
